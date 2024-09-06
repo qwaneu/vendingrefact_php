@@ -1,19 +1,24 @@
 <?php
 
-class Coin {
+namespace App;
+class Coin
+{
     private $value;
     private $name;
 
-    public function __construct($value, $name) {
+    public function __construct($value, $name)
+    {
         $this->value = $value;
         $this->name = $name;
     }
 
-    public function getValue() {
+    public function getValue()
+    {
         return $this->value;
     }
 
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 }
