@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-
 use PHPUnit\Framework\TestCase;
 
 enum Can
