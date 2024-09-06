@@ -18,7 +18,7 @@ enum Choice
 
 class VendingMachine {
 
-    public function deliver() {
+    public function deliver(Choice $choice) {
         return Can::Nothing;
 }
 
