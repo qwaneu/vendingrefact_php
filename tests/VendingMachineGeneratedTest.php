@@ -1,9 +1,10 @@
 <?php
 
+namespace Tests;
 
 use PHPUnit\Framework\TestCase;
-use VendingMachine;
-use Can;
+use App\VendingMachine;
+use App\Can;
 
 class VendingMachineGeneratedTest extends TestCase
 {
