@@ -30,12 +30,19 @@ class VendingMachine
     public function deliver(Choice $choice): Can
     {
         $res = Can::NONE;
-        $key = $choice->value;  // Cast choice to string to us in array as key
-
+        $key = $choice->value;
+        //
+        // step 1: check if choice exists {
+        //
         if (array_key_exists($key, $this->cans)) {
+            //
+            // step2 : check price
+            //
             if ($this->cans[$key]->getPrice() == 0) {
                 $res = $this->cans[$key]->getType();
+                // or price matches
             } else {
+
                 switch ($this->payment_method) {
                     case 1: // paying with coins
                         if ($this->c != -1 && $this->cans[$key]->getPrice() <= $this->c) {
@@ -50,20 +57,34 @@ class VendingMachine
                         }
                         break;
                     default:
+                        // TODO: Is this a valid situation?:
+                        // larry forgot the } else { clause
+                        // i added it, but i am acutally not sure as to wether this
+                        // is a problem
                         // unknown payment
                         break;
+                        // i think(i) nobody inserted anything
                 }
             }
         } else {
             $res = Can::NONE;
         }
 
+        //
+        // step 3: check stock
+        //
         if ($res != Can::NONE) {
             if ($this->cans[$key]->getAmount() <= 0) {
                 $res = Can::NONE;
             } else {
                 $this->cans[$key]->setAmount($this->cans[$key]->getAmount() - 1);
             }
+        }
+
+        // if can is set then return {
+        // otherwise we need to return the none
+        if ($res == Can::NONE) {
+            return Can::NONE;
         }
 
         return $res;
