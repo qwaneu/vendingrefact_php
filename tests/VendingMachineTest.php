@@ -2,10 +2,10 @@
 
 namespace Tests;
 
+use eu\qwan\vender\App\VendingMachine;
 use eu\qwan\vender\Can;
 use eu\qwan\vender\Chipknip;
 use eu\qwan\vender\Choice;
-use eu\qwan\vender\VendingMachine;
 use PHPUnit\Framework\TestCase;
 
 class VendingMachineTest extends TestCase {
