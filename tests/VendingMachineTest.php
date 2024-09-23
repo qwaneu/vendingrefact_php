@@ -6,9 +6,11 @@ use eu\qwan\vender\App\VendingMachine;
 use eu\qwan\vender\Can;
 use eu\qwan\vender\Chipknip;
 use eu\qwan\vender\Choice;
+use PHPUnit\Framework\Attributes\CodeCoverageIgnore;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
-class VendingMachineTest extends TestCase {
+#[CoversNothing] class VendingMachineTest extends TestCase {
     private VendingMachine $machine;
 
     protected function setUp(): void {
