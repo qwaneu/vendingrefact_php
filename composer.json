@@ -5,6 +5,11 @@
             "eu\\qwan\\vender\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
 
     "require-dev": {
         "phpunit/phpunit": "^11.3"

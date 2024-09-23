@@ -1,6 +1,11 @@
 <?php
 
-namespace eu\qwan\vender;
+namespace eu\qwan\vender\App;
+
+use eu\qwan\vender\Can;
+use eu\qwan\vender\CanContainer;
+use eu\qwan\vender\Chipknip;
+use eu\qwan\vender\Choice;
 
 class VendingMachine
 {
