@@ -2,3 +2,4 @@ toport
 .idea
 .aider*
 vendor
+.phpunit.cache/
