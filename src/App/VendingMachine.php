@@ -12,17 +12,13 @@ class VendingMachine
     private array $cans = array();
     private int $payment_method = 0;
     private Chipknip $chipknip;
-    private int $c = -1;
+    private int $balance = 0;
     private int $price;
 
-    public function set_value($v): void
+    public function addBalance($amount): void
     {
         $this->payment_method = 1;
-        if ($this->c != -1) {
-            $this->c += $v;
-        } else {
-            $this->c = $v;
-        }
+        $this->balance += $amount;
     }
 
     public function insert_chip($chipknip): void
@@ -53,6 +49,7 @@ class VendingMachine
                         if ($this->c != -1 && $this->cans[$key]->getPrice() <= $this->c) {
                             $res = $this->cans[$key]->getType();
                             $this->c -= $this->cans[$key]->getPrice();
+                            $this->balance -= $canContainer->getPrice();
                         }
                         break;
                     case 2: // paying with chipknip
@@ -98,9 +95,9 @@ class VendingMachine
     public function get_change(): int
     {
         $to_return = 0;
-        if ($this->c > 0) {
-            $to_return = $this->c;
-            $this->c = 0;
+        if ($this->balance > 0) {
+            $to_return = $this->balance;
+            $this->balance = 0;
         }
         return $to_return;
     }

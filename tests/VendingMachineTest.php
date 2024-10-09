@@ -49,7 +49,7 @@ use PHPUnit\Framework\TestCase;
         $this->machine->configure(Choice::SPRITE, Can::SPRITE, 10, 1);
         $this->machine->configure(Choice::FANTA, Can::FANTA, 10, 2);
 
-        $this->machine->set_value(2);
+        $this->machine->addBalance(2);
         $this->assertEquals(Can::FANTA, $this->machine->deliver(Choice::FANTA));
         $this->assertEquals(Can::NONE, $this->machine->deliver(Choice::SPRITE));
     }
@@ -58,7 +58,7 @@ use PHPUnit\Framework\TestCase;
         $this->machine->configure(Choice::SPRITE, Can::SPRITE, 10, 1);
         $this->machine->configure(Choice::FANTA, Can::FANTA, 10, 2);
 
-        $this->machine->set_value(2);
+        $this->machine->addBalance(2);
         $this->assertEquals(Can::SPRITE, $this->machine->deliver(Choice::SPRITE));
         $this->assertEquals(Can::SPRITE, $this->machine->deliver(Choice::SPRITE));
         $this->assertEquals(Can::NONE, $this->machine->deliver(Choice::SPRITE));
@@ -68,8 +68,8 @@ use PHPUnit\Framework\TestCase;
         $this->machine->configure(Choice::SPRITE, Can::SPRITE, 10, 1);
         $this->machine->configure(Choice::FANTA, Can::FANTA, 10, 2);
 
-        $this->machine->set_value(1);
-        $this->machine->set_value(1);
+        $this->machine->addBalance(1);
+        $this->machine->addBalance(1);
         $this->assertEquals(Can::SPRITE, $this->machine->deliver(Choice::SPRITE));
         $this->assertEquals(Can::SPRITE, $this->machine->deliver(Choice::SPRITE));
         $this->assertEquals(Can::NONE, $this->machine->deliver(Choice::SPRITE));
@@ -77,7 +77,7 @@ use PHPUnit\Framework\TestCase;
 
     public function testReturnsChange() {
         $this->machine->configure(Choice::SPRITE, Can::SPRITE, 10, 1);
-        $this->machine->set_value(2);
+        $this->machine->addBalance(2);
         $this->assertEquals(2, $this->machine->get_change());
         $this->assertEquals(0, $this->machine->get_change());
     }
