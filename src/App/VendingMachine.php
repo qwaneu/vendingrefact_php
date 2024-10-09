@@ -26,6 +26,8 @@ class VendingMachine
     public function __construct()
     {
         $this->moneyTill = new MoneyTill();
+
+        $this->selectPaymentMethod = $this->moneyTill;
     }
 
     public function addBalance($amount): void
@@ -42,35 +44,17 @@ class VendingMachine
 
     public function deliver(Choice $choice): Can
     {
-
         $canContainer = $this->getCanContainer($choice);
-        if (!isset($canContainer)) {
+        if (!isset($canContainer) ||
+            !$this->selectPaymentMethod->hasBalance($canContainer->getPrice()) ||
+            $canContainer->getAmount() <= 0) {
             return Can::NONE;
         }
 
-        $res = $canContainer->getType();
+        $canContainer->setAmount($canContainer->getAmount() - 1);
+        $this->selectPaymentMethod->reduceBalance($canContainer->getPrice());
 
-        //
-        // step2 : check price
-        //
-        if ($canContainer->getPrice() > 0) {
-            if($this->selectPaymentMethod?->hasBalance($canContainer->getPrice())) {
-                $this->selectPaymentMethod->reduceBalance($canContainer->getPrice());
-            } else {
-                $res = Can::NONE;
-            }
-        }
-
-        //
-        // step 3: check stock
-        //
-        if ($canContainer->getAmount() <= 0) {
-            $res = Can::NONE;
-        } else {
-            $canContainer->setAmount($canContainer->getAmount() - 1);
-        }
-
-        return $res;
+        return $canContainer->getType();
     }
 
     public function getChange(): int
