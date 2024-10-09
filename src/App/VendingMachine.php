@@ -29,63 +29,52 @@ class VendingMachine
 
     public function deliver(Choice $choice): Can
     {
-        $res = Can::NONE;
-        $key = $choice->value;
 
         $canContainer = $this->getCanContainer($choice);
-        if (isset($canContainer)) {
-            //
-            // step2 : check price
-            //
-            if ($canContainer->getPrice() == 0) {
-                $res = $canContainer->getType();
-                // or price matches
-            } else {
-
-                switch ($this->payment_method) {
-                    case 1: // paying with coins
-                        if ($canContainer->getPrice() <= $this->balance) {
-                            $res = $canContainer->getType();
-                            $this->balance -= $canContainer->getPrice();
-                        }
-                        break;
-                    case 2: // paying with chipknip
-                        if ($this->chipknip->HasValue($canContainer->getPrice())) {
-                            $this->chipknip->Reduce($canContainer->getPrice());
-                            $res = $canContainer->getType();
-                        }
-                        break;
-                    default:
-                        // TODO: Is this a valid situation?:
-                        // larry forgot the } else { clause
-                        // i added it, but i am acutally not sure as to wether this
-                        // is a problem
-                        // unknown payment
-                        break;
-                        // i think(i) nobody inserted anything
-                }
-            }
-        } else {
-            $res = Can::NONE;
         if (!isset($canContainer)) {
             return Can::NONE;
+        }
+
+        $res = $canContainer->getType();
+
+        //
+        // step2 : check price
+        //
+        if ($canContainer->getPrice() > 0) {
+            switch ($this->payment_method) {
+                case 1: // paying with coins
+                    if ($canContainer->getPrice() <= $this->balance) {
+                        $this->balance -= $canContainer->getPrice();
+                    }else {
+                        $res = Can::NONE;
+                    }
+                    break;
+                case 2: // paying with chipknip
+                    if ($this->chipknip->HasValue($canContainer->getPrice())) {
+                        $this->chipknip->Reduce($canContainer->getPrice());
+                    }else {
+                        $res = Can::NONE;
+                    }
+                    break;
+                default:
+                    // TODO: Is this a valid situation?:
+                    // larry forgot the } else { clause
+                    // i added it, but i am acutally not sure as to wether this
+                    // is a problem
+                    // unknown payment
+                    $res = Can::NONE;
+                    break;
+                // i think(i) nobody inserted anything
+            }
         }
 
         //
         // step 3: check stock
         //
-        if ($res != Can::NONE) {
-            if ($canContainer->getAmount() <= 0) {
-                $res = Can::NONE;
-            } else {
-                $canContainer->setAmount($canContainer->getAmount() - 1);
-            }
-        }
-
-        // if canContainer is set then return {
-        // otherwise we need to return the none
-        if ($res == Can::NONE) {
-            return Can::NONE;
+        if ($canContainer->getAmount() <= 0) {
+            $res = Can::NONE;
+        } else {
+            $canContainer->setAmount($canContainer->getAmount() - 1);
         }
 
         return $res;
