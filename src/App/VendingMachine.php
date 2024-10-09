@@ -32,30 +32,28 @@ class VendingMachine
     {
         $res = Can::NONE;
         $key = $choice->value;
-        //
-        // step 1: check if choice exists {
-        //
-        if (array_key_exists($key, $this->cans)) {
+
+        $canContainer = $this->getCanContainer($choice);
+        if (isset($canContainer)) {
             //
             // step2 : check price
             //
-            if ($this->cans[$key]->getPrice() == 0) {
-                $res = $this->cans[$key]->getType();
+            if ($canContainer->getPrice() == 0) {
+                $res = $canContainer->getType();
                 // or price matches
             } else {
 
                 switch ($this->payment_method) {
                     case 1: // paying with coins
-                        if ($this->c != -1 && $this->cans[$key]->getPrice() <= $this->c) {
-                            $res = $this->cans[$key]->getType();
-                            $this->c -= $this->cans[$key]->getPrice();
+                        if ($canContainer->getPrice() <= $this->balance) {
+                            $res = $canContainer->getType();
                             $this->balance -= $canContainer->getPrice();
                         }
                         break;
                     case 2: // paying with chipknip
-                        if ($this->chipknip->HasValue($this->cans[$key]->getPrice())) {
-                            $this->chipknip->Reduce($this->cans[$key]->getPrice());
-                            $res = $this->cans[$key]->getType();
+                        if ($this->chipknip->HasValue($canContainer->getPrice())) {
+                            $this->chipknip->Reduce($canContainer->getPrice());
+                            $res = $canContainer->getType();
                         }
                         break;
                     default:
@@ -76,14 +74,14 @@ class VendingMachine
         // step 3: check stock
         //
         if ($res != Can::NONE) {
-            if ($this->cans[$key]->getAmount() <= 0) {
+            if ($canContainer->getAmount() <= 0) {
                 $res = Can::NONE;
             } else {
-                $this->cans[$key]->setAmount($this->cans[$key]->getAmount() - 1);
+                $canContainer->setAmount($canContainer->getAmount() - 1);
             }
         }
 
-        // if can is set then return {
+        // if canContainer is set then return {
         // otherwise we need to return the none
         if ($res == Can::NONE) {
             return Can::NONE;
@@ -116,6 +114,15 @@ class VendingMachine
         $can->setAmount($n);
         $can->setPrice($price);
         $this->cans[$key] = $can;
+    }
+
+    /**
+     * @param Choice $choice
+     * @return ?CanContainer
+     */
+    public function getCanContainer(Choice $choice): ?CanContainer
+    {
+        return array_key_exists($choice->value, $this->cans) ? $this->cans[$choice->value] : null;
     }
 }
 
