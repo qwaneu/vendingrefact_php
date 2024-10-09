@@ -4,8 +4,8 @@ namespace eu\qwan\vender;
 
 interface PaymentMethodInterface
 {
-    public function hasBalance($amount): bool;
+    public function hasBalance(int $amount): bool;
 
-    public function reduceBalance($amount): void;
+    public function reduceBalance(int $amount): void;
 
 }
