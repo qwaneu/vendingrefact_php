@@ -20,7 +20,7 @@ use eu\qwan\vender\PaymentMethodInterface;
 class VendingMachine
 {
     private array $cans = array();
-    private ?PaymentMethodInterface $selectPaymentMethod = null;
+    private PaymentMethodInterface $selectPaymentMethod;
     private MoneyTill $moneyTill;
 
     public function __construct()
