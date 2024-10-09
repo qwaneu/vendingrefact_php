@@ -67,19 +67,17 @@ class VendingMachine
         return $to_return;
     }
 
-    public function configure($choice, $c, $n, $price = 0): void
+    public function configure($choice, $canType, $amount, $price = 0): void
     {
         $key = $choice->value;
 
-        if (array_key_exists($key, $this->cans)) {
-            $this->cans[$key]->setAmount($this->cans[$key]->getAmount() + $n);
-            return;
+        if (!array_key_exists($key, $this->cans)) {
+            $this->cans[$key] = new CanContainer();
         }
-        $can = new CanContainer();
-        $can->setType($c);
-        $can->setAmount($n);
-        $can->setPrice($price);
-        $this->cans[$key] = $can;
+
+        $this->cans[$key]->setType($canType);
+        $this->cans[$key]->setPrice($price);
+        $this->cans[$key]->setAmount($this->cans[$key]->getAmount() + $amount);
     }
 
     /**

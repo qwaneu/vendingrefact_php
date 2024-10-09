@@ -4,7 +4,7 @@ namespace eu\qwan\vender;
 class CanContainer {
     private Can $type;
     private int $price;
-    private int $amount;
+    private int $amount = 0;
 
     public function getType(): Can
     {
