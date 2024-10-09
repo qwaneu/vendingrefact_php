@@ -6,25 +6,38 @@ use eu\qwan\vender\Can;
 use eu\qwan\vender\CanContainer;
 use eu\qwan\vender\Chipknip;
 use eu\qwan\vender\Choice;
+use eu\qwan\vender\MoneyTill;
+use eu\qwan\vender\PaymentMethodInterface;
 
+/**
+ * TODO
+ * - Change names
+ * - deliver method split-up
+ * --> extract check price
+ * --> $this->cans[$key] into a variable
+ * -->
+ */
 class VendingMachine
 {
     private array $cans = array();
-    private int $payment_method = 0;
-    private Chipknip $chipknip;
-    private int $balance = 0;
+    private ?PaymentMethodInterface $selectPaymentMethod = null;
+    private MoneyTill $moneyTill;
+
+    public function __construct()
+    {
+        $this->moneyTill = new MoneyTill();
+    }
 
     public function addBalance($amount): void
     {
-        $this->payment_method = 1;
-        $this->balance += $amount;
+        $this->selectPaymentMethod = $this->moneyTill;
+        $this->moneyTill->addBalance($amount);
     }
 
     public function insert_chip($chipknip): void
     {
         // TODO: can't pay with chip in Britain
-        $this->payment_method = 2;
-        $this->chipknip = $chipknip;
+        $this->selectPaymentMethod = $chipknip;
     }
 
     public function deliver(Choice $choice): Can
@@ -41,30 +54,10 @@ class VendingMachine
         // step2 : check price
         //
         if ($canContainer->getPrice() > 0) {
-            switch ($this->payment_method) {
-                case 1: // paying with coins
-                    if ($canContainer->getPrice() <= $this->balance) {
-                        $this->balance -= $canContainer->getPrice();
-                    }else {
-                        $res = Can::NONE;
-                    }
-                    break;
-                case 2: // paying with chipknip
-                    if ($this->chipknip->HasValue($canContainer->getPrice())) {
-                        $this->chipknip->Reduce($canContainer->getPrice());
-                    }else {
-                        $res = Can::NONE;
-                    }
-                    break;
-                default:
-                    // TODO: Is this a valid situation?:
-                    // larry forgot the } else { clause
-                    // i added it, but i am acutally not sure as to wether this
-                    // is a problem
-                    // unknown payment
-                    $res = Can::NONE;
-                    break;
-                // i think(i) nobody inserted anything
+            if($this->selectPaymentMethod?->hasBalance($canContainer->getPrice())) {
+                $this->selectPaymentMethod->reduceBalance($canContainer->getPrice());
+            } else {
+                $res = Can::NONE;
             }
         }
 
@@ -83,9 +76,9 @@ class VendingMachine
     public function get_change(): int
     {
         $to_return = 0;
-        if ($this->balance > 0) {
-            $to_return = $this->balance;
-            $this->balance = 0;
+        if ($this->moneyTill->getBalance() > 0) {
+            $to_return = $this->moneyTill->getBalance();
+            $this->moneyTill->reduceBalance($to_return);
         }
         return $to_return;
     }

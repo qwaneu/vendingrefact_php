@@ -1,20 +1,21 @@
 <?php
 namespace eu\qwan\vender;
 
-class Chipknip {
+class Chipknip implements PaymentMethodInterface {
     public int $credits;
 
     public function __construct($initial_value) {
         $this->credits = $initial_value;
     }
 
-    public function hasValue($p): bool
+    public function hasBalance($amount): bool
     {
-        return $this->credits >= $p;
+        return $this->credits >= $amount;
     }
 
-    public function reduce($p): void
+    public function reduceBalance($amount): void
     {
-        $this->credits -= $p;
+        $this->credits -= $amount;
     }
 }
+
