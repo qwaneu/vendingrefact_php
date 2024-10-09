@@ -9,14 +9,6 @@ use eu\qwan\vender\Choice;
 use eu\qwan\vender\MoneyTill;
 use eu\qwan\vender\PaymentMethodInterface;
 
-/**
- * TODO
- * - Change names
- * - deliver method split-up
- * --> extract check price
- * --> $this->cans[$key] into a variable
- * -->
- */
 class VendingMachine
 {
     private array $cans = array();
@@ -45,16 +37,12 @@ class VendingMachine
     public function deliver(Choice $choice): Can
     {
         $canContainer = $this->getCanContainer($choice);
-        if (!isset($canContainer) ||
-            !$this->selectPaymentMethod->hasBalance($canContainer->getPrice()) ||
-            $canContainer->getAmount() <= 0) {
-            return Can::NONE;
+
+        if($this->canBuyCan($canContainer)){
+            return $this->buyCan($canContainer);
         }
 
-        $canContainer->setAmount($canContainer->getAmount() - 1);
-        $this->selectPaymentMethod->reduceBalance($canContainer->getPrice());
-
-        return $canContainer->getType();
+        return Can::NONE;
     }
 
     public function getChange(): int
@@ -87,6 +75,43 @@ class VendingMachine
     public function getCanContainer(Choice $choice): ?CanContainer
     {
         return array_key_exists($choice->value, $this->cans) ? $this->cans[$choice->value] : null;
+    }
+
+    private function buyCan(?CanContainer $canContainer): Can
+    {
+        if($canContainer === null) {
+            return Can::NONE;
+        }
+
+        $canContainer->setAmount($canContainer->getAmount() - 1);
+        $this->selectPaymentMethod->reduceBalance($canContainer->getPrice());
+
+        return $canContainer->getType();
+    }
+
+    private function canBuyCan(?CanContainer $canContainer): bool
+    {
+        return isset($canContainer) &&
+            $this->hasEnoughBalanceToBuy($canContainer) &&
+            $this->hasCansLeft($canContainer);
+    }
+
+    /**
+     * @param CanContainer $canContainer
+     * @return bool
+     */
+    public function hasCansLeft(CanContainer $canContainer): bool
+    {
+        return $canContainer->getAmount() > 0;
+    }
+
+    /**
+     * @param CanContainer $canContainer
+     * @return bool
+     */
+    public function hasEnoughBalanceToBuy(CanContainer $canContainer): bool
+    {
+        return $this->selectPaymentMethod->hasBalance($canContainer->getPrice());
     }
 }
 
