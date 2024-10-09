@@ -13,7 +13,6 @@ class VendingMachine
     private int $payment_method = 0;
     private Chipknip $chipknip;
     private int $balance = 0;
-    private int $price;
 
     public function addBalance($amount): void
     {
@@ -102,7 +101,6 @@ class VendingMachine
 
     public function configure($choice, $c, $n, $price = 0): void
     {
-        $this->price = $price;
         $key = $choice->value;
 
         if (array_key_exists($key, $this->cans)) {
