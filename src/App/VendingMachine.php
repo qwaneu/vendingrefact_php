@@ -67,6 +67,8 @@ class VendingMachine
             }
         } else {
             $res = Can::NONE;
+        if (!isset($canContainer)) {
+            return Can::NONE;
         }
 
         //
