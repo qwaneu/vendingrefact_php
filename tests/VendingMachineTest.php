@@ -78,8 +78,8 @@ use PHPUnit\Framework\TestCase;
     public function testReturnsChange() {
         $this->machine->configure(Choice::SPRITE, Can::SPRITE, 10, 1);
         $this->machine->addBalance(2);
-        $this->assertEquals(2, $this->machine->get_change());
-        $this->assertEquals(0, $this->machine->get_change());
+        $this->assertEquals(2, $this->machine->getChange());
+        $this->assertEquals(0, $this->machine->getChange());
     }
 
     public function testStock() {
@@ -99,7 +99,7 @@ use PHPUnit\Framework\TestCase;
     public function testCheckoutChipIfChipknipInserted() {
         $this->machine->configure(Choice::SPRITE, Can::SPRITE, 1, 1);
         $chip = new Chipknip(10);
-        $this->machine->insert_chip($chip);
+        $this->machine->insertChip($chip);
         $this->assertEquals(Can::SPRITE, $this->machine->deliver(Choice::SPRITE));
         $this->assertEquals(9, $chip->credits);
     }
@@ -107,7 +107,7 @@ use PHPUnit\Framework\TestCase;
     public function testCheckoutChipEmpty() {
         $this->machine->configure(Choice::SPRITE, Can::SPRITE, 1, 1);
         $chip = new Chipknip(0);
-        $this->machine->insert_chip($chip);
+        $this->machine->insertChip($chip);
         $this->assertEquals(Can::NONE, $this->machine->deliver(Choice::SPRITE));
         $this->assertEquals(0, $chip->credits);
     }

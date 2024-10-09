@@ -34,7 +34,7 @@ class VendingMachine
         $this->moneyTill->addBalance($amount);
     }
 
-    public function insert_chip($chipknip): void
+    public function insertChip($chipknip): void
     {
         // TODO: can't pay with chip in Britain
         $this->selectPaymentMethod = $chipknip;
@@ -73,7 +73,7 @@ class VendingMachine
         return $res;
     }
 
-    public function get_change(): int
+    public function getChange(): int
     {
         $to_return = 0;
         if ($this->moneyTill->getBalance() > 0) {
